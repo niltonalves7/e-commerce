@@ -1,16 +1,20 @@
 package com.project.ec.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "users")
 public class User {
 
     @Id
@@ -19,4 +23,5 @@ public class User {
 
     private String name;
     private String email;
+    private String password;
 }
