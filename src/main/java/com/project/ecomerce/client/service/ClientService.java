@@ -5,7 +5,7 @@ import com.project.ecomerce.client.dto.response.RegisterClientResponseDTO;
 import java.util.List;
 import java.util.UUID;
 
-public interface IClientService {
+public interface ClientService {
     RegisterClientResponseDTO createClient(RegisterClientRequestDTO clientDto);
     RegisterClientResponseDTO getClientById(UUID id);
     List<RegisterClientResponseDTO> getAllClients();
