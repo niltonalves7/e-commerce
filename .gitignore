@@ -31,3 +31,47 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# build #
+/target/
+*.jar
+*.war
+*.ear
+
+# Maven #
+.mvn/
+mvnw
+mvnw.cmd
+
+# logs #
+logs/
+*.log
+
+# sistema operacional #
+.DS_Store
+Thumbs.db
+
+# variáveis de ambient #
+.env
+.env.*
+
+# config #
+application-local.yml
+application-dev.yml
+
+# docker #
+docker-compose.override.yml
+
+# node #
+node_modules/
+dist/
+.angular/
+coverage/
+
+# testes #
+*.tmp
+*.temp
+
+# Outros #
+*.swp
+*.swo
