@@ -1,4 +1,13 @@
-package com.project.ecomerce.client;
+package com.project.ecomerce.client.repository;
 
-public class ClientRepository {
+import com.project.ecomerce.client.entity.Client;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface ClientRepository extends JpaRepository<Client, UUID> {
+    Optional<Client> findByEmail(String email);
 }
