@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ClientService {
+public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepository;
     private final ClientMapper mapper;
@@ -23,15 +23,16 @@ public class ClientService {
 
     private static final Roles DEFAULT_ROLE = Roles.USER;
 
-    public ClientService(ClientRepository clientRepository,
-                         ClientMapper mapper,
-                         PasswordEncoder passwordEncoder) {
+    public ClientServiceImpl(ClientRepository clientRepository,
+                             ClientMapper mapper,
+                             PasswordEncoder passwordEncoder) {
         this.clientRepository = clientRepository;
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public RegisterClientResponseDTO create(RegisterClientRequestDTO request) {
+    @Override
+    public RegisterClientResponseDTO createClient(RegisterClientRequestDTO request) {
 
         if (clientRepository.findByEmail(request.email()).isPresent()){
                     throw new AlreadyExistsException("Email already registered");
@@ -47,14 +48,16 @@ public class ClientService {
         return mapper.toRegisterResponse(saved);
     }
 
-    public List<RegisterClientResponseDTO> findAll() {
+    @Override
+    public List<RegisterClientResponseDTO> getAllClients() {
         return clientRepository.findAll()
                 .stream()
                 .map(mapper::toRegisterResponse)
                 .toList();
     }
 
-    public RegisterClientResponseDTO findById(UUID id) {
+    @Override
+    public RegisterClientResponseDTO getClientById(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Client not found"));
@@ -62,30 +65,32 @@ public class ClientService {
         return mapper.toRegisterResponse(client);
     }
 
-    public RegisterClientResponseDTO update(UUID id, RegisterClientRequestDTO request) {
+    @Override
+    public RegisterClientResponseDTO updateClient(UUID id, RegisterClientRequestDTO clientDto) {
 
         Client client = clientRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Client not found"));
 
-        clientRepository.findByEmail(request.email())
+        clientRepository.findByEmail(clientDto.email())
                 .filter(c -> !c.getId().equals(id))
                 .ifPresent(c -> {
                     throw new AlreadyExistsException("User already registered");
                 });
 
-        client.setName(request.name());
-        client.setEmail(request.email());
+        client.setName(clientDto.name());
+        client.setEmail(clientDto.email());
 
-        if (request.password() != null && !request.password().isBlank()) {
-            client.setPassword(passwordEncoder.encode(request.password()));
+        if (clientDto.password() != null && !clientDto.password().isBlank()) {
+            client.setPassword(passwordEncoder.encode(clientDto.password()));
         }
         Client updated = clientRepository.save(client);
 
         return mapper.toRegisterResponse(updated);
     }
 
-    public void delete(UUID id) {
+    @Override
+    public void deleteClient(UUID id) {
         Client client = clientRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Client not found"));
