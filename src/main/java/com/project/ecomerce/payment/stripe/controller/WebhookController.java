@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/stripe/webhook")
 public class WebhookController {
 
-    @Value("${STRIPE_WEBHOOK_SECRET_KEY}")
+    //@Value("${STRIPE_WEBHOOK_SECRET_KEY}")
     private String webhookSecret;
 
     private final StripePaymentService stripepaymentService;
