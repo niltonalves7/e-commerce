@@ -1,12 +1,22 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/ecomerce_db
-    username: root
-    password: root
+    url: jdbc:postgresql://postgres:5432/ecommerce
+    username: admin
+    password: admin
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+
+  flyway:
+    enabled: true
+
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 3600000
+
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY}
+    publishable-key: ${STRIPE_PUBLISHABLE_KEY}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET_KEY}
