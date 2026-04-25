@@ -1,4 +1,11 @@
 package com.project.ecommerce.domain.category.dto.response;
 
-public class CategoryResponseDTO {
-}
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public record CategoryResponseDTO(
+        UUID id,
+        String name,
+        String description,
+        LocalDateTime createdAt
+) {}
