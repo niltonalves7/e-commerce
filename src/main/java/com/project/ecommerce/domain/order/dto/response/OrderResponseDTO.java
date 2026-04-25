@@ -1,6 +1,6 @@
-package com.project.ecomerce.domain.order.dto.response;
+package com.project.ecommerce.domain.order.dto.response;
 
-import com.project.ecomerce.shared.enums.OrderStatus;
+import com.project.ecommerce.shared.enums.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,5 +13,6 @@ public record OrderResponseDTO(
         OrderStatus status,
         BigDecimal totalAmount,
         List<OrderItemResponseDTO> items,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {}
