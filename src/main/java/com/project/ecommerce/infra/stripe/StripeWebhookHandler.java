@@ -1,5 +1,6 @@
-package com.project.ecommerce.infra.stripe.service;
+package com.project.ecommerce.infra.stripe;
 
+import com.google.gson.JsonParser;
 import com.project.ecommerce.domain.payment.service.PaymentService;
 import com.project.ecommerce.shared.enums.PaymentStatus;
 import com.stripe.exception.StripeException;
@@ -22,19 +23,22 @@ public class StripeWebhookHandler {
     public void handle(String payload, String sigHeader) throws StripeException {
         Event event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
 
-        if (event.getDataObjectDeserializer().getObject().isEmpty()) return;
-
-        PaymentIntent intent = (PaymentIntent) event.getDataObjectDeserializer()
-                .getObject().get();
-
         PaymentStatus status = switch (event.getType()) {
             case "payment_intent.succeeded" -> PaymentStatus.PAID;
             case "payment_intent.payment_failed" -> PaymentStatus.FAILED;
             default -> null;
         };
 
-        if (status != null) {
-            paymentService.handleWebhook(intent.getId(), status);
-        }
+        if (status == null) return;
+
+        // busca diretamente pelo ID do PaymentIntent contido no evento
+        String paymentIntentId = JsonParser.parseString(payload)
+                .getAsJsonObject()
+                .getAsJsonObject("data")
+                .getAsJsonObject("object")
+                .get("id")
+                .getAsString();
+
+        paymentService.handleWebhook(paymentIntentId, status);
     }
 }
