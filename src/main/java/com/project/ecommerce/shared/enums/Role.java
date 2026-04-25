@@ -1,15 +1,17 @@
-package com.project.ecomerce.shared.enums;
+package com.project.ecommerce.shared.enums;
 
-import lombok.Getter;
+public enum Role {
 
-@Getter
-public enum Roles {
     ADMIN("ROLE_ADMIN"),
     USER("ROLE_USER");
 
-    private final String role;
+    private final String authority;
 
-    Roles(String role){
-        this.role = role;
+    Role(String authority) {
+        this.authority = authority;
+    }
+
+    public String getAuthority() {
+        return authority;
     }
 }
