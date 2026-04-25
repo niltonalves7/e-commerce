@@ -1,29 +1,29 @@
-package com.project.ecomerce.shared.enums;
+package com.project.ecommerce.shared.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum OrderStatus {
 
-    PENDING("pending"),         // pedido criado, aguardando pagamento
-    PROCESSING("processing"),   // sendo preparado
-    SHIPPED("shipped"),         // enviado
-    DELIVERED("delivered"),     // entregue
-    CANCELED("canceled"),       // cancelado
-    REFUNDED("refunded");       // reembolsado
+    PENDING,        // pedido criado, aguardando pagamento
+    PROCESSING,     // sendo preparado
+    SHIPPED,        // enviado
+    DELIVERED,      // entregue
+    CANCELED,       // cancelado
+    REFUNDED;       // reembolsado
 
-    private final String value;
-
-    OrderStatus(String value) {
-        this.value = value;
+    public boolean canTransitionTo(OrderStatus next) {
+        return switch (this) {
+            case PENDING -> next == PROCESSING || next == CANCELED;
+            case PROCESSING -> next == SHIPPED || next == CANCELED;
+            case SHIPPED -> next == DELIVERED;
+            case DELIVERED -> next == REFUNDED;
+            default -> false;
+        };
     }
 
     public static OrderStatus fromValue(String value) {
-        for (OrderStatus status : OrderStatus.values()) {
-            if (status.value.equalsIgnoreCase(value)) {
-                return status;
-            }
+        try {
+            return OrderStatus.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid order status: " + value);
         }
-        throw new IllegalArgumentException("Invalid order status: " + value);
     }
 }
