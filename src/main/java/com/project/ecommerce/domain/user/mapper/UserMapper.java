@@ -1,14 +1,18 @@
-package com.project.ecomerce.domain.user.mapper;
+package com.project.ecommerce.domain.user.mapper;
 
-import com.project.ecomerce.domain.user.dto.request.RegisterUserRequestDTO;
-import com.project.ecomerce.domain.user.dto.response.RegisterUserResponseDTO;
-import com.project.ecomerce.domain.user.entity.User;
+import com.project.ecommerce.domain.user.dto.request.CreateUserRequestDTO;
+import com.project.ecommerce.domain.user.dto.request.UpdateUserRequestDTO;
+import com.project.ecommerce.domain.user.dto.response.UserResponseDTO;
+import com.project.ecommerce.domain.user.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    User toEntity(RegisterUserRequestDTO request);
+    User toEntity(CreateUserRequestDTO request);
 
-    RegisterUserResponseDTO toRegisterResponse(User user);
+    UserResponseDTO toResponse(User user);
+
+    void updateEntityFromDTO(UpdateUserRequestDTO request, @MappingTarget User user);
 }
