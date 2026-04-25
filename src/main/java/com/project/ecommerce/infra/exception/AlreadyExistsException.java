@@ -1,4 +1,4 @@
-package com.project.ecomerce.infra.exception;
+package com.project.ecommerce.infra.exception;
 
 public class AlreadyExistsException extends RuntimeException {
     public AlreadyExistsException(String message) {
