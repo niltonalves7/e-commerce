@@ -2,6 +2,7 @@ package com.project.ecommerce.domain.cart.service;
 
 import com.project.ecommerce.domain.cart.dto.request.AddCartItemRequestDTO;
 import com.project.ecommerce.domain.cart.dto.request.UpdateCartItemRequestDTO;
+import com.project.ecommerce.domain.cart.dto.response.CartItemResponseDTO;
 import com.project.ecommerce.domain.cart.dto.response.CartResponseDTO;
 import com.project.ecommerce.domain.cart.entity.Cart;
 import com.project.ecommerce.domain.cart.entity.CartItem;
@@ -19,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,7 +37,7 @@ public class CartService {
     public CartResponseDTO getCart() {
         User user = getAuthenticatedUser();
         Cart cart = getOrCreateCart(user);
-        return mapper.toResponse(cart);
+        return toCartResponse(cart);
     }
 
     @Transactional
@@ -49,7 +52,6 @@ public class CartService {
             throw new BusinessException("Insufficient stock");
         }
 
-        // se produto já está no carrinho, incrementa a quantidade
         cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId())
                 .ifPresentOrElse(
                         existingItem -> existingItem.setQuantity(existingItem.getQuantity() + request.quantity()),
@@ -64,7 +66,7 @@ public class CartService {
                         }
                 );
 
-        return mapper.toResponse(cartRepository.save(cart));
+        return toCartResponse(cartRepository.save(cart));
     }
 
     @Transactional
@@ -80,7 +82,7 @@ public class CartService {
         }
 
         item.setQuantity(request.quantity());
-        return mapper.toResponse(cartRepository.save(cart));
+        return toCartResponse(cartRepository.save(cart));
     }
 
     @Transactional
@@ -92,7 +94,7 @@ public class CartService {
         validateCartOwnership(cart, item);
 
         cart.getItems().remove(item);
-        return mapper.toResponse(cartRepository.save(cart));
+        return toCartResponse(cartRepository.save(cart));
     }
 
     @Transactional
@@ -103,9 +105,28 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    // método usado pelo OrderService no checkout
     public Cart getCartEntity() {
         return getOrCreateCart(getAuthenticatedUser());
+    }
+
+    private CartResponseDTO toCartResponse(Cart cart) {
+        List<CartItemResponseDTO> items = cart.getItems().stream()
+                .map(mapper::toItemResponse)
+                .toList();
+
+        return new CartResponseDTO(
+                cart.getId(),
+                items,
+                calculateTotal(cart),
+                cart.getUpdatedAt()
+        );
+    }
+
+    private BigDecimal calculateTotal(Cart cart) {
+        return cart.getItems().stream()
+                .map(item -> item.getUnitPrice()
+                        .multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private Cart getOrCreateCart(User user) {
