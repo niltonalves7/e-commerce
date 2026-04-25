@@ -1,19 +1,19 @@
-package com.project.ecomerce.domain.product.dto.response;
+package com.project.ecommerce.domain.product.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.project.ecommerce.domain.category.dto.response.CategoryResponseDTO;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ProductResponseDTO(
-
         UUID id,
         String name,
         String description,
         BigDecimal price,
-        Integer stock,
+        Integer stockQuantity,
         String imageUrl,
-
-        LocalDateTime createdAt
+        CategoryResponseDTO category,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {}
