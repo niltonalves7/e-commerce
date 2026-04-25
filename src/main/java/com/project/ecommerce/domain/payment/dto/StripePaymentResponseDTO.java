@@ -1,4 +1,4 @@
-package com.project.ecommerce.domain.payment.dto.response;
+package com.project.ecommerce.domain.payment.dto;
 
 import com.project.ecommerce.shared.enums.PaymentStatus;
 
