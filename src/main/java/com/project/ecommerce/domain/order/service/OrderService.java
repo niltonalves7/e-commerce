@@ -8,13 +8,14 @@ import com.project.ecommerce.domain.order.entity.Order;
 import com.project.ecommerce.domain.order.entity.OrderItem;
 import com.project.ecommerce.domain.order.mapper.OrderMapper;
 import com.project.ecommerce.domain.order.repository.OrderRepository;
-import com.project.ecommerce.domain.product.repository.ProductRepository;
 import com.project.ecommerce.domain.user.entity.User;
 import com.project.ecommerce.domain.user.repository.UserRepository;
 import com.project.ecommerce.infra.exception.BusinessException;
 import com.project.ecommerce.infra.exception.ResourceNotFoundException;
 import com.project.ecommerce.shared.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,6 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
     private final CartService cartService;
     private final OrderMapper orderMapper;
 
@@ -46,10 +46,8 @@ public class OrderService {
                 .map(this::toOrderItem)
                 .toList();
 
-        // valida estoque de todos os itens antes de prosseguir
         orderItems.forEach(item -> {
-            int stock = item.getProduct().getStockQuantity();
-            if (stock < item.getQuantity()) {
+            if (item.getProduct().getStockQuantity() < item.getQuantity()) {
                 throw new BusinessException(
                         "Insufficient stock for product: " + item.getProduct().getName()
                 );
@@ -68,7 +66,6 @@ public class OrderService {
         order.setTotalAmount(calculateTotal(order));
 
         Order saved = orderRepository.save(order);
-
         cartService.clearCart();
 
         return orderMapper.toResponse(saved);
@@ -80,22 +77,25 @@ public class OrderService {
         return orderMapper.toResponse(order);
     }
 
-    public List<OrderResponseDTO> getAllOrders() {
+    public Page<OrderResponseDTO> getAllOrders(Pageable pageable) {
         User user = getAuthenticatedUser();
-        return orderRepository.findByUserId(user.getId())
-                .stream()
-                .map(orderMapper::toResponse)
-                .toList();
+        return orderRepository.findByUserId(user.getId(), pageable)
+                .map(orderMapper::toResponse);
     }
 
     @Transactional
-    public void updateOrderStatus(UUID orderId, OrderStatus status) {
+    public void updateOrderStatus(UUID orderId, OrderStatus newStatus) {
         Order order = findOrder(orderId);
-        order.setStatus(status);
+
+        if (!order.getStatus().canTransitionTo(newStatus)) {
+            throw new BusinessException("Invalid status transition: "
+                    + order.getStatus() + " → " + newStatus);
+        }
+
+        order.setStatus(newStatus);
         orderRepository.save(order);
     }
 
-    // usado pelo PaymentService
     public Order getOrderEntity(UUID orderId) {
         return findOrder(orderId);
     }
@@ -104,7 +104,7 @@ public class OrderService {
         return OrderItem.builder()
                 .product(cartItem.getProduct())
                 .quantity(cartItem.getQuantity())
-                .unitPrice(cartItem.getUnitPrice()) // preço congelado no momento do checkout
+                .unitPrice(cartItem.getUnitPrice())
                 .build();
     }
 
