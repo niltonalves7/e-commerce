@@ -1,7 +1,10 @@
-package com.project.ecomerce.domain.product.entity;
+package com.project.ecommerce.domain.product.entity;
 
+import com.project.ecommerce.domain.category.entity.Category;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,16 +12,19 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Product {
 
+    @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Id private UUID id;
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String name;
 
     @Column(nullable = false, length = 500)
@@ -28,16 +34,20 @@ public class Product {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private Integer stock;
+    private Integer stockQuantity;
 
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(nullable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
