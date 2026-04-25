@@ -1,6 +1,7 @@
-package com.project.ecomerce.domain.order.dto.response;
+package com.project.ecommerce.domain.order.dto.response;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record OrderItemResponseDTO(
@@ -8,5 +9,6 @@ public record OrderItemResponseDTO(
         UUID productId,
         String productName,
         Integer quantity,
-        BigDecimal unitPrice
+        BigDecimal unitPrice,
+        LocalDateTime createdAt
 ) {}
