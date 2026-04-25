@@ -1,49 +1,49 @@
-package com.project.ecomerce.domain.user.controller;
+package com.project.ecommerce.domain.user.controller;
 
-import com.project.ecomerce.domain.user.dto.request.RegisterUserRequestDTO;
-import com.project.ecomerce.domain.user.dto.response.RegisterUserResponseDTO;
-import com.project.ecomerce.domain.user.service.UserService;
-import com.project.ecomerce.domain.user.service.UserServiceImpl;
+import com.project.ecommerce.domain.user.dto.request.CreateUserRequestDTO;
+import com.project.ecommerce.domain.user.dto.request.UpdateUserRequestDTO;
+import com.project.ecommerce.domain.user.dto.response.UserResponseDTO;
+import com.project.ecommerce.domain.user.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserServiceImpl clientService) {
-        this.userService = clientService;
-    }
-
     @PostMapping
-    public ResponseEntity<RegisterUserResponseDTO> createUser(@RequestBody @Valid RegisterUserRequestDTO clientDto) {
-
-        RegisterUserResponseDTO response = userService.createUser(clientDto);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid CreateUserRequestDTO request) {
+        UserResponseDTO response = userService.createUser(request);
         return ResponseEntity
                 .created(URI.create("/users/" + response.id()))
                 .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<RegisterUserResponseDTO>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
+        return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RegisterUserResponseDTO> getUserById(@PathVariable UUID id) {
-                return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RegisterUserResponseDTO> updateUser(@PathVariable UUID id, @RequestBody @Valid RegisterUserRequestDTO clientDto) {
-        return ResponseEntity.ok(userService.updateUser(id, clientDto));
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @PathVariable UUID id,
+            @RequestBody @Valid UpdateUserRequestDTO request) {
+        return ResponseEntity.ok(userService.updateUser(id, request));
     }
 
     @DeleteMapping("/{id}")
