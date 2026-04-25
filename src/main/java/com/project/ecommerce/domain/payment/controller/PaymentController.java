@@ -1,46 +1,46 @@
-package com.project.ecomerce.domain.payment.controller;
+package com.project.ecommerce.domain.payment.controller;
 
-import com.project.ecomerce.domain.payment.dto.PaymentResponseDTO;
-import com.project.ecomerce.domain.payment.entity.Payment;
-import com.project.ecomerce.domain.payment.mapper.PaymentMapper;
-import com.project.ecomerce.domain.payment.service.PaymentService;
-import com.project.ecomerce.domain.payment.stripe.dto.StripePaymentResponseDTO;
-import com.project.ecomerce.domain.payment.stripe.service.StripePaymentService;
+import com.project.ecommerce.domain.payment.dto.PaymentResponseDTO;
+import com.project.ecommerce.domain.payment.dto.StripePaymentResponseDTO;
+import com.project.ecommerce.domain.payment.service.PaymentService;
+import com.project.ecommerce.infra.stripe.StripeWebhookHandler;
 import com.stripe.exception.StripeException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
-    private final StripePaymentService stripepaymentService;
     private final PaymentService paymentService;
-    private final PaymentMapper paymentMapper;
-
-    public PaymentController(StripePaymentService stripepaymentService, PaymentService paymentService,
-                             PaymentMapper paymentMapper) {
-        this.stripepaymentService = stripepaymentService;
-        this.paymentService = paymentService;
-        this.paymentMapper = paymentMapper;
-    }
+    private final StripeWebhookHandler stripeWebhookHandler;
 
     @PostMapping("/{orderId}")
-    public ResponseEntity<StripePaymentResponseDTO> createStripePayment(@PathVariable UUID orderId) throws StripeException {
-        return ResponseEntity.ok(stripepaymentService.createStripePayment(orderId));
+    public ResponseEntity<StripePaymentResponseDTO> createPayment(
+            @PathVariable UUID orderId) throws StripeException {
+        StripePaymentResponseDTO response = paymentService.createPayment(orderId);
+        return ResponseEntity
+                .created(URI.create("/payments/order/" + orderId))
+                .body(response);
+    }
+
+    @PostMapping("/webhook")
+    public ResponseEntity<Void> handleWebhook(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String sigHeader
+    ) throws StripeException {
+        stripeWebhookHandler.handle(payload, sigHeader);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/order/{orderId}")
-    public ResponseEntity<PaymentResponseDTO> getPaymentByOrderId(@PathVariable UUID orderId ) {
-        Payment payment = paymentService.getPaymentByOrderId(orderId);
-        return ResponseEntity.ok(paymentMapper.toResponse(payment));
-    }
-
-    @DeleteMapping("/order/{orderId}")
-    public ResponseEntity<?> deletePaymentById(@PathVariable UUID orderId) {
-        paymentService.deletePaymentByOrderId(orderId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<PaymentResponseDTO> getPaymentByOrderId(
+            @PathVariable UUID orderId) {
+        return ResponseEntity.ok(paymentService.getPaymentByOrderId(orderId));
     }
 }
