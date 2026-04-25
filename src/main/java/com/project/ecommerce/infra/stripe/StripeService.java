@@ -1,4 +1,4 @@
-package com.project.ecommerce.infra.stripe.service;
+package com.project.ecommerce.infra.stripe;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
