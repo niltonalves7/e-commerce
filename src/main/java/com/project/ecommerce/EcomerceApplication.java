@@ -1,4 +1,4 @@
-package com.project.ecomerce;
+package com.project.ecommerce;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
