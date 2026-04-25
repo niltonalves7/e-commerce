@@ -1,30 +1,19 @@
-package com.project.ecomerce.shared.enums;
+package com.project.ecommerce.shared.enums;
 
-import lombok.Getter;
-
-@Getter
 public enum PaymentStatus {
 
-    PENDING("pending"),             // aguardando pagamento
-    PROCESSING("processing"),       // pagamento em processamento
-    PAID("paid"),         // pagamento concluído
-    FAILED("failed"),               // pagamento falhou
-    CANCELED("canceled"),           // cancelado
-    REFUNDED("refunded");           // reembolsado
+    PENDING,        // aguardando pagamento
+    PROCESSING,     // pagamento em processamento
+    PAID,           // pagamento concluído
+    FAILED,         // pagamento falhou
+    CANCELED,       // cancelado
+    REFUNDED;       // reembolsado
 
-    private final String value;
-
-    PaymentStatus(String value) {
-        this.value = value;
-    }
-
-    // 🔹 Conversão segura de String → Enum
     public static PaymentStatus fromValue(String value) {
-        for (PaymentStatus status : PaymentStatus.values()) {
-            if (status.value.equalsIgnoreCase(value)) {
-                return status;
-            }
+        try {
+            return PaymentStatus.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid payment status: " + value);
         }
-        throw new IllegalArgumentException("Invalid payment status: " + value);
     }
 }
