@@ -1,7 +1,7 @@
-package com.project.ecomerce.domain.payment.mapper;
+package com.project.ecommerce.domain.payment.mapper;
 
-import com.project.ecomerce.domain.payment.dto.PaymentResponseDTO;
-import com.project.ecomerce.domain.payment.entity.Payment;
+import com.project.ecommerce.domain.payment.dto.PaymentResponseDTO;
+import com.project.ecommerce.domain.payment.entity.Payment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
