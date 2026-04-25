@@ -1,0 +1,17 @@
+package com.project.ecommerce.domain.payment.dto.response;
+
+import com.project.ecommerce.shared.enums.PaymentStatus;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+public record PaymentResponseDTO(
+        UUID id,
+        UUID orderId,
+        BigDecimal amount,
+        PaymentStatus status,
+        String stripePaymentIntentId,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+) {}
