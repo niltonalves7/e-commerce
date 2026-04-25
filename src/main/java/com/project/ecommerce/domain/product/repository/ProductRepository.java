@@ -1,12 +1,17 @@
-package com.project.ecomerce.domain.product.repository;
+package com.project.ecommerce.domain.product.repository;
 
-import com.project.ecomerce.domain.product.entity.Product;
+import com.project.ecommerce.domain.product.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-@Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
+    Page<Product> findByCategoryId(UUID categoryId, Pageable pageable);
+
+    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    Page<Product> findByCategoryIdAndNameContainingIgnoreCase(UUID categoryId, String name, Pageable pageable);
 }
