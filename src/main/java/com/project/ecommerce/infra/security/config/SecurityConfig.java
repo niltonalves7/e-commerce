@@ -40,11 +40,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
 
+                        // orders — só autenticado, exceto update status que é admin
+                        .requestMatchers(HttpMethod.POST, "/orders/checkout").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/orders/*/status").hasRole("ADMIN")
+
                         // users — só admin
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                        .requestMatchers("/users/**").hasRole("ADMIN")
 
                         // categories — só admin
                         .requestMatchers("/categories/**").hasRole("ADMIN")
@@ -52,8 +54,13 @@ public class SecurityConfig {
                         // cart — só autenticado
                         .requestMatchers("/cart/**").authenticated()
 
-                        // stripe webhook — público
+                        // payments — autenticado, exceto webhook
                         .requestMatchers(HttpMethod.POST, "/payments/webhook").permitAll()
+                        .requestMatchers("/payments/**").authenticated()
+
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
 
                         // todo o resto exige autenticação
                         .anyRequest().authenticated()
