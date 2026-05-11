@@ -2,12 +2,12 @@ package com.project.ecommerce.shared.enums;
 
 public enum OrderStatus {
 
-    PENDING,        // pedido criado, aguardando pagamento
-    PROCESSING,     // sendo preparado
-    SHIPPED,        // enviado
-    DELIVERED,      // entregue
-    CANCELED,       // cancelado
-    REFUNDED;       // reembolsado
+    PENDING,
+    PROCESSING,
+    SHIPPED,
+    DELIVERED,
+    CANCELED,
+    REFUNDED;
 
     public boolean canTransitionTo(OrderStatus next) {
         return switch (this) {
