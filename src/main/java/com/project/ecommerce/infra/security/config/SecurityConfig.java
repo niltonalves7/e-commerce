@@ -30,31 +30,26 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        // auth — público
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
-                        // products — leitura pública, escrita só admin
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
 
-                        // orders — só autenticado, exceto update status que é admin
                         .requestMatchers(HttpMethod.POST, "/orders/checkout").authenticated()
                         .requestMatchers(HttpMethod.GET, "/orders/**").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/orders/*/status").hasRole("ADMIN")
 
-                        // users — só admin
                         .requestMatchers("/users/**").hasRole("ADMIN")
 
-                        // categories — só admin
                         .requestMatchers("/categories/**").hasRole("ADMIN")
 
-                        // cart — só autenticado
+                        .requestMatchers("/account/**").authenticated()
+
                         .requestMatchers("/cart/**").authenticated()
 
-                        // payments — autenticado, exceto webhook
                         .requestMatchers(HttpMethod.POST, "/payments/webhook").permitAll()
                         .requestMatchers("/payments/**").authenticated()
 
@@ -62,7 +57,6 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
 
-                        // todo o resto exige autenticação
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
