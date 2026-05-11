@@ -24,21 +24,21 @@ public class CartController {
     }
 
     @PostMapping("/items")
-    public ResponseEntity<CartResponseDTO> addItem(
+    public ResponseEntity<CartResponseDTO> addItemToCart(
             @RequestBody @Valid AddCartItemRequestDTO request) {
-        return ResponseEntity.ok(cartService.addItem(request));
+        return ResponseEntity.ok(cartService.addItemToCart(request));
     }
 
     @PatchMapping("/items/{itemId}")
-    public ResponseEntity<CartResponseDTO> updateItem(
+    public ResponseEntity<CartResponseDTO> updateItemToCart(
             @PathVariable UUID itemId,
             @RequestBody @Valid UpdateCartItemRequestDTO request) {
-        return ResponseEntity.ok(cartService.updateItem(itemId, request));
+        return ResponseEntity.ok(cartService.updateCartItem(itemId, request));
     }
 
     @DeleteMapping("/items/{itemId}")
-    public ResponseEntity<CartResponseDTO> removeItem(@PathVariable UUID itemId) {
-        return ResponseEntity.ok(cartService.removeItem(itemId));
+    public ResponseEntity<CartResponseDTO> removeItemFromCart(@PathVariable UUID itemId) {
+        return ResponseEntity.ok(cartService.removeItemFromCart(itemId));
     }
 
     @DeleteMapping
