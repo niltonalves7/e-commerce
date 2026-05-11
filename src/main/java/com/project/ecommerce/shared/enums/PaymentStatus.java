@@ -2,12 +2,12 @@ package com.project.ecommerce.shared.enums;
 
 public enum PaymentStatus {
 
-    PENDING,        // aguardando pagamento
-    PROCESSING,     // pagamento em processamento
-    PAID,           // pagamento concluído
-    FAILED,         // pagamento falhou
-    CANCELED,       // cancelado
-    REFUNDED;       // reembolsado
+    PENDING,
+    PROCESSING,
+    PAID,
+    FAILED,
+    CANCELED,
+    REFUNDED;
 
     public static PaymentStatus fromValue(String value) {
         try {
