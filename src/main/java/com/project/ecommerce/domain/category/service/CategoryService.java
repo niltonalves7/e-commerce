@@ -22,7 +22,7 @@ public class CategoryService {
     private final CategoryMapper mapper;
 
     public CategoryResponseDTO createCategory(CreateCategoryRequestDTO request) {
-        if (categoryRepository.findByName(request.name()).isPresent()) {
+        if (categoryRepository.findCategoryByName(request.name()).isPresent()) {
             throw new AlreadyExistsException("Category already exists");
         }
 
@@ -39,7 +39,7 @@ public class CategoryService {
     public CategoryResponseDTO updateCategory(UUID id, UpdateCategoryRequestDTO request) {
         Category category = findCategoryById(id);
 
-        categoryRepository.findByName(request.name())
+        categoryRepository.findCategoryByName(request.name())
                 .filter(existing -> !existing.getId().equals(id))
                 .ifPresent(existing -> {
                     throw new AlreadyExistsException("Category name already in use");
