@@ -26,7 +26,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserResponseDTO createUser(CreateUserRequestDTO request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+        if (userRepository.findUserByEmail(request.email()).isPresent()) {
             throw new AlreadyExistsException("Email already registered");
         }
 
@@ -52,7 +52,7 @@ public class UserService {
     public UserResponseDTO updateUser(UUID id, UpdateUserRequestDTO request) {
         User user = findUserById(id);
 
-        userRepository.findByEmail(request.email())
+        userRepository.findUserByEmail(request.email())
                 .filter(existing -> !existing.getId().equals(id))
                 .ifPresent(existing -> {
                     throw new AlreadyExistsException("Email already in use");
