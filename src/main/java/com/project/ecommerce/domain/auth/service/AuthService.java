@@ -24,14 +24,14 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserMapper userMapper;
 
-    public AuthResponseDTO register(CreateUserRequestDTO request) {
-        if (userRepository.findByEmail(request.email()).isPresent()) {
+    public AuthResponseDTO userRegister(CreateUserRequestDTO request) {
+        if (userRepository.findUserByEmail(request.email()).isPresent()) {
             throw new AlreadyExistsException("Email already registered");
         }
 
         User user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole(Role.USER); // sempre USER no registro público
+        user.setRole(Role.USER);
 
         User saved = userRepository.save(user);
         String token = jwtService.generateToken(new UserDetailsImpl(saved));
@@ -39,8 +39,8 @@ public class AuthService {
         return new AuthResponseDTO(token, saved.getName(), saved.getEmail(), saved.getRole().name());
     }
 
-    public AuthResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByEmail(request.email())
+    public AuthResponseDTO userLogin(LoginRequestDTO request) {
+        User user = userRepository.findUserByEmail(request.email())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
