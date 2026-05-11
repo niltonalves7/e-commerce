@@ -5,7 +5,6 @@ import com.project.ecommerce.domain.payment.service.PaymentService;
 import com.project.ecommerce.shared.enums.PaymentStatus;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
-import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +30,6 @@ public class StripeWebhookHandler {
 
         if (status == null) return;
 
-        // busca diretamente pelo ID do PaymentIntent contido no evento
         String paymentIntentId = JsonParser.parseString(payload)
                 .getAsJsonObject()
                 .getAsJsonObject("data")
