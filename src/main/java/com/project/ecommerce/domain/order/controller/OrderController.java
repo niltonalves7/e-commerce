@@ -39,7 +39,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}/status")
-    public ResponseEntity<Void> updateStatus(
+    public ResponseEntity<Void> updateOrderStatus(
             @PathVariable UUID orderId,
             @RequestBody @Valid UpdateOrderStatusRequestDTO request) {
         orderService.updateOrderStatus(orderId, request.status());
