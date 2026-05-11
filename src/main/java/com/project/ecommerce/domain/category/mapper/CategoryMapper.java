@@ -7,7 +7,7 @@ import com.project.ecommerce.domain.category.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CategoryMapper.class})
 public interface CategoryMapper {
 
     Category toEntity(CreateCategoryRequestDTO request);
