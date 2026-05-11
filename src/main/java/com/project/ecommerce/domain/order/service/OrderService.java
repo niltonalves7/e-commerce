@@ -79,7 +79,7 @@ public class OrderService {
 
     public Page<OrderResponseDTO> getAllOrders(Pageable pageable) {
         User user = getAuthenticatedUser();
-        return orderRepository.findByUserId(user.getId(), pageable)
+        return orderRepository.findOrderByUserId(user.getId(), pageable)
                 .map(orderMapper::toResponse);
     }
 
@@ -131,7 +131,7 @@ public class OrderService {
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-        return userRepository.findByEmail(email)
+        return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
