@@ -41,7 +41,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponseDTO addItem(AddCartItemRequestDTO request) {
+    public CartResponseDTO addItemToCart(AddCartItemRequestDTO request) {
         User user = getAuthenticatedUser();
         Cart cart = getOrCreateCart(user);
 
@@ -70,7 +70,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponseDTO updateItem(UUID itemId, UpdateCartItemRequestDTO request) {
+    public CartResponseDTO updateCartItem(UUID itemId, UpdateCartItemRequestDTO request) {
         User user = getAuthenticatedUser();
         Cart cart = getOrCreateCart(user);
 
@@ -86,7 +86,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponseDTO removeItem(UUID itemId) {
+    public CartResponseDTO removeItemFromCart(UUID itemId) {
         User user = getAuthenticatedUser();
         Cart cart = getOrCreateCart(user);
 
@@ -142,7 +142,7 @@ public class CartService {
         String email = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-        return userRepository.findByEmail(email)
+        return userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
